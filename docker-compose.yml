@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  bd:
+    image: postgres:16
+    container_name: first-api-postgres
+    restart: "no"
+    ports: 
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: firstapidb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - first-api-network
+volumes:
+  postgres_data:
+networks:
+  first-api-network:
+    driver: bridge  
