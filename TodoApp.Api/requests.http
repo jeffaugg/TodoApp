@@ -1,0 +1,60 @@
+### Variáveis
+@baseUrl = http://localhost:5206
+@baseUrlHttps = https://localhost:7038
+
+### Register User
+POST {{baseUrl}}/api/user/register
+Content-Type: application/json
+
+{
+  "name": "João Silva",
+  "email": "joao@example.com",
+  "password": "Senha123!"
+}
+
+### Register User - Example 2
+POST {{baseUrl}}/api/user/register
+Content-Type: application/json
+
+{
+  "name": "Maria Santos",
+  "email": "maria@example.com",
+  "password": "MinhaSenha456"
+}
+
+### Login User
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+  "email": "joao@example.com",
+  "password": "Senha123!"
+}
+
+### Login User - Example 2
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+  "email": "maria@example.com",
+  "password": "MinhaSenha456"
+}
+
+### Login User - Invalid Credentials
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+  "email": "joao@example.com",
+  "password": "SenhaErrada"
+}
+
+### Register User - Invalid Data (Missing Fields)
+POST {{baseUrl}}/api/user/register
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "invalid-email",
+  "password": "123"
+}
