@@ -1,11 +1,8 @@
-using FluentValidation;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoApp.Api.DTOs;
 using TodoApp.Application.DTOs;
 using TodoApp.Application.Services.Interfaces;
-using TodoApp.Domain;
-using TodoApp.Domain.Repositories.Interfaces;
 
 namespace TodoApp.Api.Controllers;
 
@@ -13,60 +10,62 @@ namespace TodoApp.Api.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
+    private readonly ITokenService _tokenService;
     private readonly IUserService _userService;
-    private readonly IValidator<RegisterUserDto> _registerValidator;
-    private readonly IValidator<LoginUserDto> _loginValidator;
 
-    public UserController(IUserService userService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator)
+    public UserController(IUserService userService, ITokenService tokenService)
     {
         _userService = userService;
-        _registerValidator = registerValidator;
-        _loginValidator = loginValidator;
+        _tokenService = tokenService;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserDto dto)
     {
-        var validationResult = await _registerValidator.ValidateAsync(dto);
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
-
         try 
         {
             var createDto = new CreateUserDto(dto.Name, dto.Email, dto.Password);
 
             var userId = await _userService.AddAsync(createDto);
 
-            return CreatedAtAction(nameof(Register), new { id = userId }, new { id = userId, dto.Name, dto.Email });
+            var response = new UserResponseDto(userId, dto.Name, dto.Email);
+            return CreatedAtAction(nameof(Register), new { id = userId }, response);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new ErrorResponseDto(ex.Message));
         }
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginUserDto dto)
     {
-        var validationResult = await _loginValidator.ValidateAsync(dto);
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
-
         try
         {
             var user = await _userService.LoginAsync(dto.Email, dto.Password);
 
-            return Ok(new 
-            { 
-                message = "Login realizado com sucesso!",
-                userId = user.Id,
-                name = user.Name,
-                email = user.Email
-            });
+            var token =  _tokenService.GenerateToken(user);
+
+            var response = new LoginResponseDto(
+                "Login realizado com sucesso!",
+                token,
+                user.Id,
+                user.Name
+            );
+            return Ok(response);
         }
         catch (Exception ex)
         {
-            return Unauthorized(new { message = ex.Message });
+            return Unauthorized(new ErrorResponseDto(ex.Message));
         }
+    }
+
+    [HttpGet("me")]
+    [Authorize]
+    public IActionResult GetMyProfile()
+    {
+        var nome = User.Identity?.Name;
+
+        return Ok(new { message = $"Olá, {nome}! Você acessou uma rota protegida." });
     }
 }

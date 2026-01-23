@@ -1,6 +1,9 @@
 ### Variáveis
 @baseUrl = http://localhost:5206
 @baseUrlHttps = https://localhost:7038
+@token = seu_token_jwt_aqui
+
+
 
 ### Register User
 POST {{baseUrl}}/api/user/register
@@ -19,7 +22,7 @@ Content-Type: application/json
 {
   "name": "Maria Santos",
   "email": "maria@example.com",
-  "password": "MinhaSenha456"
+  "password": "MinhaSenha456!"
 }
 
 ### Login User
@@ -37,7 +40,7 @@ Content-Type: application/json
 
 {
   "email": "maria@example.com",
-  "password": "MinhaSenha456"
+  "password": "MinhaSenha456!"
 }
 
 ### Login User - Invalid Credentials
@@ -49,12 +52,99 @@ Content-Type: application/json
   "password": "SenhaErrada"
 }
 
-### Register User - Invalid Data (Missing Fields)
-POST {{baseUrl}}/api/user/register
+GET {{baseUrl}}/api/user/me
+Authorization: Bearer {{token}}
+
+
+# Requer autenticação - use o token do login
+POST {{baseUrl}}/api/tarefas
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "titulo": "Estudar .NET",
+  "descricao": "Aprender Entity Framework Core e Clean Architecture"
+}
+
+### 12. Criar Tarefa - Exemplo 2
+POST {{baseUrl}}/api/tarefas
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "titulo": "Fazer exercícios",
+  "descricao": "30 minutos de caminhada pela manhã"
+}
+
+### 13. Criar Tarefa - Exemplo 3
+POST {{baseUrl}}/api/tarefas
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "titulo": "Reunião de equipe",
+  "descricao": "Discutir o progresso do projeto TodoApp"
+}
+
+# Retorna todas as tarefas do usuário autenticado
+GET {{baseUrl}}/api/tarefas
+Authorization: Bearer {{token}}
+
+# Substitua {id} pelo ID de uma tarefa existente
+PUT {{baseUrl}}/api/tarefas/{id}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "titulo": "Estudar .NET Avançado",
+  "descricao": "Aprender sobre padrões de projeto e arquitetura limpa"
+}
+
+# Use um ID retornado pela rota de listagem
+PUT {{baseUrl}}/api/tarefas/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "titulo": "Tarefa Atualizada",
+  "descricao": "Descrição modificada"
+}
+
+# Substitua {id} pelo ID de uma tarefa existente
+DELETE {{baseUrl}}/api/tarefas/{id}
+Authorization: Bearer {{token}}
+
+# Use um ID retornado pela rota de listagem
+DELETE {{baseUrl}}/api/tarefas/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+# Deve falhar - tentando atualizar tarefa de outro usuário
+PUT {{baseUrl}}/api/tarefas/99999999-9999-9999-9999-999999999999
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "titulo": "Tarefa de outro usuário",
+  "descricao": "Esta atualização deve falhar"
+}
+
+# Deve falhar - tentando deletar tarefa de outro usuário
+DELETE {{baseUrl}}/api/tarefas/99999999-9999-9999-9999-999999999999
+Authorization: Bearer {{token}}
+
+
+
+# Deve retornar 401 Unauthorized
+POST {{baseUrl}}/api/tarefas
 Content-Type: application/json
 
 {
-  "name": "",
-  "email": "invalid-email",
-  "password": "123"
+  "titulo": "Tarefa sem autenticação",
+  "descricao": "Esta requisição deve falhar"
 }
+
+# Deve retornar 401 Unauthorized
+GET {{baseUrl}}/api/tarefas
+
+# Deve retornar 401 Unauthorized
+GET {{baseUrl}}/api/user/me

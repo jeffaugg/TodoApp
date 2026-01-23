@@ -12,6 +12,18 @@ namespace TodoApp.Domain
         public string Descricao { get; private set; } = descricao;
         public DateTime DataCriacao { get; private set; } = DateTime.UtcNow;
         public StatusTarefa Status { get; private set; } = StatusTarefa.Pendente;
+        
         public Guid UserId { get; private set; } = userId;
+
+        public virtual User? User { get; set; } 
+
+        protected Tarefa() : this(string.Empty, string.Empty, Guid.Empty) { }
+        
+        public void Concluir() => Status = StatusTarefa.Concluida;
+        public void Update(string novoTitulo, string novaDescricao)
+        {
+            Titulo = novoTitulo;
+            Descricao = novaDescricao;
+        }
     }
 }

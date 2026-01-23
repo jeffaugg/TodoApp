@@ -1,7 +1,7 @@
 using System;
 using TodoApp.Application.Services.Interfaces;
 
-namespace TodoApp.Application.Services;
+namespace TodoApp.Infrastructure.Services;
 
 public class BcryptPasswordHasher : IPasswordHasher
 {
