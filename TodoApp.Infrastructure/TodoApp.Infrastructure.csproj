@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="../TodoApp.Application/TodoApp.Application.csproj" />
     <ProjectReference Include="../TodoApp.Domain/TodoApp.Domain.csproj" />
+    <ProjectReference Include="../TodoApp.Telemetry/TodoApp.Telemetry.csproj" />
   </ItemGroup>
 
   <ItemGroup>

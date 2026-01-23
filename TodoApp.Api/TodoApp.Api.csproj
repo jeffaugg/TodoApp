@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../TodoApp.Application/TodoApp.Application.csproj" />
+    <ProjectReference Include="../TodoApp.Telemetry/TodoApp.Telemetry.csproj" />
     <ProjectReference Include="..\TodoApp.Infrastructure\TodoApp.Infrastructure.csproj" />
   </ItemGroup>
 

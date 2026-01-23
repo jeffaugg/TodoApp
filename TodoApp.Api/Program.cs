@@ -2,6 +2,10 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using TodoApp.Api.Extensions;
 using TodoApp.Api.Validators;
@@ -11,6 +15,7 @@ using TodoApp.Domain.Repositories.Interfaces;
 using TodoApp.Infrastructure.Contexts;
 using TodoApp.Infrastructure.Repositories;
 using TodoApp.Infrastructure.Services;
+using TodoApp.Telemetry.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]!);
@@ -18,7 +23,10 @@ var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]!);
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-} );
+});
+
+builder.Services.addTelemetry(builder.Configuration, builder.Logging);
+
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
