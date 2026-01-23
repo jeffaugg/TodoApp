@@ -1,18 +1,16 @@
-using TodoApp.Api.Telemetry;
 using TodoApp.Application.DTOs;
 using TodoApp.Application.Services.Interfaces;
 using TodoApp.Domain;
 using TodoApp.Domain.Repositories.Interfaces;
+using TodoApp.Telemetry.Attributes;
 
 namespace TodoApp.Application.Services;
 
+[Telemetry]
 public class UserService(IUserRepository userRepository, IPasswordHasher passwordHasher) : IUserService
 {
     public async Task<Guid> AddAsync(CreateUserDto user)
     {
-        using var activitySource = TelemetrySetup.activitySource.StartActivity("UserService.AddAsync");
-
-        activitySource?.SetTag("step", "add_async_service");
         var hasUserEmail = await userRepository.GetByEmailAsync(user.Email);
         if (hasUserEmail != null) throw new Exception("Email already in use");
 
@@ -25,10 +23,6 @@ public class UserService(IUserRepository userRepository, IPasswordHasher passwor
 
     public async Task<User> LoginAsync(string email, string password)
     {
-        using var activitySource = TelemetrySetup.activitySource.StartActivity("UserService.LoginAsync");
-
-        activitySource?.SetTag("step", "LoginAsync");
-
         var user = await userRepository.GetByEmailAsync(email);
 
         if (user == null)

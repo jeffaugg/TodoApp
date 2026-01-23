@@ -8,17 +8,15 @@ using Microsoft.IdentityModel.Tokens;
 using TodoApp.Api.Telemetry;
 using TodoApp.Application.Services.Interfaces;
 using TodoApp.Domain;
+using TodoApp.Telemetry.Attributes;
 
 namespace TodoApp.Infrastructure.Services;
 
+[Telemetry]
 public class TokenService(IConfiguration configuration) : ITokenService
 {
     public string GenerateToken(User user)
     {
-        using var activitySource = TelemetrySetup.activitySource.StartActivity("TokenService.GenerateToken");
-
-        activitySource?.SetTag("step", "generate_token");
-
         var keyString = configuration["Jwt:Key"] ?? throw new Exception("Jwt:Key not found");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
 

@@ -35,6 +35,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ITarefaRepository, TarefaRepository>();
 builder.Services.AddScoped<ITarefaService, TarefaService>();
 
+builder.Services.AddTelemetryInterception();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
